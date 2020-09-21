@@ -1,0 +1,56 @@
+%% Project 1 Question 3.1a Identifying the K_v and tau values
+clear
+close all
+
+
+% m_variable means the measured data
+load('./DataSet/velocity_response_2_1.mat');
+m_time = velocity_response_4_1_data(:,1);
+m_input = velocity_response_4_1_data(:,2);
+m_velocity = velocity_response_4_1_data(:,3);
+
+figure(1);
+subplot(2,1,1);
+plot(m_time,m_input);
+subplot(2,1,2);
+plot(m_time,m_velocity);
+
+figure(2);
+plot(m_time,m_velocity);
+
+% By observing the graphs we can see that a 1.5*step input results in a
+% settling velocity of about 145. So we can set K_v to be 145/1.5 = 96
+K_v = 96
+
+% By using a K_v of 96 we look at the time it took to get to 63.21% of the
+% final value (96*0.6321*1.5 = 91.0224 which correpondes to 1*tau) as well 
+% as 86.47 of the final value (96*0.8647*1.5 = 124.5168 which correpondes
+% to 2*tau).
+% Using linear interpolation of the points (0.59,83.4) and (0.6,105.3)
+% gives us a tau of 0.0965
+
+tau_v = 0.0965
+
+%% Question 3.1b Modelling the System
+% K_v and tau_v values were obtained fromt he previous sections
+out = sim('fomodel.slx');
+
+sim_input = out.ScopeData(1).signals(1).values;
+sim_velocity = out.ScopeData.signals(2).values;
+sim_time = out.ScopeData.time;
+
+figure(3);
+plot(sim_time,sim_velocity);
+xlabel('Time(s)')
+ylabel('Velocity')
+
+%% Question 3.1c Comparing Model to real results
+hold all
+figure(4)
+plot(m_time,m_input)
+plot(sim_time,sim_input)
+legent('Measured','Simulation')
+hold off
+
+
+
