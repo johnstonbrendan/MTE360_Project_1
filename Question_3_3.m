@@ -38,19 +38,24 @@ for x=1:length(frequency)
     delta_X(x) = max(m_pos) - min(m_pos);
 end
 
+%overwrite (spikes at beginning not representitive of ossilations) 
+delta_X(5) = 0.78 + 0.82;
+
 %get by zooming in on graph and using data pointer
 time_lag(1) = (0.78 + 0.38)/2 - 0.5;
 time_lag(2) = (0.41 + 0.17)/2 - 0.25;
 time_lag(3) = 0.51 - 0.5;
 time_lag(4) = 0.48 - 0.45;
 time_lag(5) = 0.18 - 0.12;
-time_lag(6) = 0.205 - 0.17;
+time_lag(6) = 0.285 - 0.25;
 
 
 gain_m = delta_X./delta_Xr;
 phase_m = -360 * (time_lag./period);
 
 T = table(frequency, delta_Xr, delta_X, time_lag, gain_m, phase_m)
+filename = '3_3_a_summary.xlsx';
+writetable(T,filename,'Sheet',1,'Range','A1')
 
 %kv and tauv 
 tau_v = 0.0965;
@@ -62,10 +67,10 @@ w_n = sqrt(K_p*K_v/tau_v);
 zeta = 1/(2*tau_v*w_n);
 
 %convert frequency from hz to rad/s
-frequency = frequency * 6.28;
+frequency = frequency .* 6.28;
 
 %obtain theoretical bode pot
-num =[(w_n*w_n)]; den = [1 (zeta*w_n) (w_n*w_n)];
+num =[(w_n*w_n)]; den = [1 (2*zeta*w_n) (w_n*w_n)];
 sysD =tf(num,den);
 w = logspace(-1, 2);
 [mag, phase] = bode(sysD,w);
@@ -82,11 +87,11 @@ plot(frequency, gain_m ,'x');
 hold off
 
 subplot(2,1,2);
-[frequency, phase] = bode(sysD,w);
+
 loglog(w,squeeze(phase)),grid;
 semilogx(w,squeeze(phase)),grid;
 hold on
 ylabel('Phase [deg]')
-xlabel('Frequency [rad/s]')
-plot(phase_m, 'x');
+plot(frequency, phase_m, 'x');
 hold off
+xlabel('Frequency [rad/s]')
