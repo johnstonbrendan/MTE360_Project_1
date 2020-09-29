@@ -72,7 +72,7 @@ frequency = frequency .* 6.28;
 %obtain theoretical bode pot
 num =[(w_n*w_n)]; den = [1 (2*zeta*w_n) (w_n*w_n)];
 sysD =tf(num,den);
-w = logspace(-1, 2);
+w = logspace(-0.1, log(157)/log(10));
 [mag, phase] = bode(sysD,w);
 
 
@@ -80,11 +80,11 @@ figure(7)
 sgtitle('Bode Plots, Theoretical vs Measured');
 subplot(2,1,1);
 loglog(w,squeeze(mag)),grid;
-semilogx(w,squeeze(mag)),grid;
 hold on
 ylabel('Gain [mm/mm]')
 plot(frequency, gain_m ,'x');
 hold off
+legend('Theoretical','Measured');
 
 subplot(2,1,2);
 
@@ -94,4 +94,5 @@ hold on
 ylabel('Phase [deg]')
 plot(frequency, phase_m, 'x');
 hold off
+legend('Theoretical','Measured');
 xlabel('Frequency [rad/s]')
